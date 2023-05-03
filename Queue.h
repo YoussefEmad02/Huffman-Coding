@@ -5,8 +5,8 @@
 //  Created by Ashraf AbdelRaouf on 31/03/2022.
 //  The Key have three values (0, 1, 2) where 2 skips all the elements that has 1 or 0 as keys, while 1 skip three elements only that has 0 as a key, while 0 remain on the back of the queue.
 
-#ifndef Queue_hpp
-#define Queue_hpp
+#ifndef Queue.h
+#define Queue.h
 
 #include <stdio.h>
 #include <iostream>
