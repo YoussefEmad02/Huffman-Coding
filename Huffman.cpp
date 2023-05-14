@@ -1,16 +1,17 @@
 #include <iostream>
 #include <string>
-#include "NodeHeader.h"
+#include "BSTNodeHeader.h"
 #include "HuffmanHeader.h"
+#include "Queue.h"
 
 using namespace std;
-
+BinarySearchTree freqMap;
 //Definition of class constructor
 Huffman::Huffman() {
     root = nullptr;
 }
 
-// Definition of class destructor 
+// Definition of class destructor
 Huffman::~Huffman() {
     deleteTree(root);
 }
@@ -22,7 +23,7 @@ string Huffman::encode(const string& text) {
     }
     string encodedText = "";
     for (char ch : text) {
-        encodedText += huffmanCode[ch];
+        encodedText += freqMap.codeof(ch);
     }
     return encodedText;
 }
@@ -33,7 +34,7 @@ string Huffman::decode(const string& encodedText) {
         return "";
     }
     string decodedText = "";
-    Node* current = root;
+    BSTNode* current = root;
     for (char bit : encodedText) {
         if (bit == '0') {
             current = current->left;
@@ -51,32 +52,52 @@ string Huffman::decode(const string& encodedText) {
 
 // Definition of Build Huffman tree
 void Huffman::buildTree(const string& text) {
+    cout << "I Entered Build tree"<<endl;
     if (text.empty()) {
         return;
     }
-    BinarySearchTree freqMap;
+
     for (char ch : text) {
         freqMap.insert(ch);
     }
+    freqMap.inorderTraversal();
 
+    while (!freqMap.pq.isEmpty()) {
+        BSTNode* left = freqMap.pq.top();
+        cout << "Left "<<left->ch <<endl;
+        freqMap.pq.dequeue();
+        BSTNode* right = freqMap.pq.top();
+        cout << "Right "<<right->ch <<endl;
+        freqMap.pq.dequeue();
+        BSTNode* parent = new BSTNode('p', left->freq + right->freq);
+        cout << "Parent "<<parent->freq <<endl;
+        parent->left = left;
+        parent->right = right;
+        freqMap.pq.enqueue(parent);
+    }
+    freqMap.pq.display();
+    root = freqMap.pq.top();
+    freqMap.pq.dequeue();
     generateHuffmanCode(root, "");
 
 }
 
 // Definition of Generate Huffman codes for each character
-void Huffman::generateHuffmanCode(Node* node, string code) {
+void Huffman::generateHuffmanCode(BSTNode* node, string code) {
     if (node == nullptr) {
         return;
     }
     if (node->isLeaf()) {
-        huffmanCode[node->ch] = code;
+        node->code = code;
+
     }
     generateHuffmanCode(node->left, code + "0");
     generateHuffmanCode(node->right, code + "1");
+    cout <<"code of " << node->ch<<" "<<node->code<<endl;
 }
 
 // Definition of Delete Huffman tree
-void Huffman::deleteTree(Node* node) {
+void Huffman::deleteTree(BSTNode* node) {
     if (node == nullptr) {
         return;
     }
