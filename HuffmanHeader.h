@@ -1,26 +1,27 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "NodeHeader.h"
+#include "BSTNodeHeader.h"
 #include "BinarySearchTreeHeader.h"
+#include "Queue.h"
 
 using namespace std;
 
-#ifndef HuffmanHeader.h
-#define HuffmanHeader.h
+#ifndef HuffmanHeader
+#define HuffmanHeader
 
 // Compare class for priority queue
 class Compare {
 public:
-    bool operator()(Node* l, Node* r) {
+    bool operator()(BSTNode* l, BSTNode* r) {
         return l->freq > r->freq;
     }
 };
 
 class Huffman {
 private:
-    Node* root;
-    unordered_map<char, string> huffmanCode;
+    BSTNode* root;
+    BinarySearchTree huffmanCode;
 public:
     Huffman();
     // class constructor of huffman 
@@ -37,10 +38,10 @@ public:
     void buildTree(const string& text);
     // Build Huffman tree
 
-    void generateHuffmanCode(Node* node, string code);
+    void generateHuffmanCode(BSTNode* node, string code);
     // Generate Huffman codes for each character
 
-    void deleteTree(Node* node);
+    void deleteTree(BSTNode* node);
     // Delete Huffman tree
 };
 
