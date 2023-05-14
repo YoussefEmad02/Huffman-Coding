@@ -1,21 +1,23 @@
 #pragma once
 #include <iostream>
-#include "NodeHeader.h"
+#include "BSTNodeHeader.h"
+#include "Queue.h"
 
 using namespace std;
 
-#ifndef BinarySearchTreeHeader.h
-#define BinarySearchTreeHeader.h
+#ifndef BinarySearchTreeHeader
+#define BinarySearchTreeHeader
 class BinarySearchTree
 {
 private:
-    Node* root;
-    void inorderTraversal(Node* node);
+    BSTNode* root;
+    void inorderTraversal(BSTNode* node);
 public:
+    Queue pq;
     BinarySearchTree();
     void insert(char data);
-    void insert(char data,int freq);
     void inorderTraversal();
+    int Freqof(char ch);
 };
 
 
