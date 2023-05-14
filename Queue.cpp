@@ -1,169 +1,70 @@
-//
-//  Queue.cpp
-//  PriorityQueueLL
-//
-//  Created by Ashraf AbdelRaouf on 31/03/2022.
-//
+#include <iostream>
 
+using namespace std;
+#include "BSTNodeHeader.h"
 #include "Queue.h"
-//--- Definition of Queue constructor
-Queue::Queue()
-        : MyFront(0), MyBack(0)
-{}
+/*class BSTNode {
+public:
+    char data;
+    int priority;
+    BSTNode* next;
 
-//--- Definition of Queue copy constructor
-Queue::Queue(const Queue & original){
-    MyFront = MyBack = 0;
-    if (!original.empty()){
-        // Copy first node
-        MyFront = MyBack = new Queue::Node(original.front());
+    BSTNode(char data, int priority) {
+        this->data = data;
+        this->priority = priority;
+        this->next = nullptr;
+    }
+};
+*/
 
-        // Set pointer to run through original's linked list
-        Queue::NodePointer origPtr = original.MyFront->next;
-        while (origPtr != 0){
-            MyBack->next = new Queue::Node(origPtr->data);
-            MyBack->next->previous=MyBack;
-            MyBack = MyBack->next;
-            origPtr = origPtr->next;
+void Queue::enqueue(BSTNode* node) {
+    BSTNode* newNode = new BSTNode(node->ch, node->freq);
+    if (front == nullptr || node->freq < front->freq) {
+        newNode->right = front;
+        front = newNode;
+        if (rear == nullptr) {
+            rear = newNode;
         }
     }
-}
-
-//--- Definition of Queue destructor
-Queue::~Queue(){
-    // Set pointer to run through the queue
-    Queue::NodePointer prev = MyFront, ptr;
-    while (prev != 0){
-        ptr = prev->next;
-        delete prev;
-        prev = ptr;
-    }
-}
-
-//--- Definition of assignment operator
-const Queue & Queue::operator=(const Queue & rightHandSide){
-    if (this != &rightHandSide){         // check that not q = q
-        this->~Queue();                  // destroy current linked list
-        if (rightHandSide.empty())       // empty queue
-            MyFront = MyBack = 0;
-        else{                                // copy rightHandSide's list
-            // Copy first node
-            MyFront = MyBack = new Queue::Node(rightHandSide.front());
-
-            // Set pointer to run through rightHandSide's linked list
-            Queue::NodePointer rhsPtr = rightHandSide.MyFront->next;
-            while (rhsPtr != 0)
-            {
-                MyBack->next = new Queue::Node(rhsPtr->data);
-                MyBack->next->previous=MyBack;
-                MyBack = MyBack->next;
-                rhsPtr = rhsPtr->next;
-            }
+    else {
+        BSTNode* curr = front;
+        while (curr->right != nullptr && node->freq >= curr->right->freq) {
+            curr = curr->right;
         }
+        newNode->right = curr->right;
+        curr->right = newNode;
     }
-    return *this;
-}
-
-//--- Definition of empty()
-bool Queue::empty() const
-{
-    return (MyFront == 0);
-}
-
-//--- Definition of enqueue()
-void Queue::enqueue(const QueueElement & value, int key){
-    int cnt=0;
-    Queue::NodePointer newptr = new Queue::Node(value, key), loc=MyBack;
-    if (empty()){
-        MyFront = MyBack = newptr;
-        return;
-    }
-    if(key<=MyBack->key){
-        MyBack->next = newptr;
-        newptr->previous=MyBack;
-        MyBack = newptr;
-        return;
-    }
-    while(((key==2)&&(loc->key<2))||
-          ((key==1)&&(loc->key<1)&&(cnt++<3))){
-        loc=loc->previous;
-        if(loc==0)  break;
-    }
-    if(loc==0){
-        newptr->next=MyFront;
-        newptr->previous=0;
-        MyFront=newptr;
-        newptr->next->previous=newptr;
-    }
-    else{
-        newptr->next=loc->next;
-        newptr->previous=loc;
-        loc->next=newptr;
-        newptr->next->previous=newptr;
+    if (rear == nullptr || node->freq > rear->freq) {
+        rear = newNode;
     }
 }
 
-//--- Definition of display()
-void Queue::display(ostream & out) const
-{
-    Queue::NodePointer ptr;
-    for (ptr = MyFront; ptr != 0; ptr = ptr->next)
-        out << ptr->data<<"--> "<<ptr->key << ",  ";
-    out << endl;
-
-}
-
-//--- Definition of output operator
-ostream & operator<< (ostream & out, const Queue & aQueue)
-{
-    aQueue.display(out);
-    return out;
-}
-
-//--- Definition of front()
-QueueElement Queue::front() const
-{
-    if (!empty())
-        return (MyFront->data);
-    else
-    {
-        cerr << "*** Queue is empty "
-                " -- returning garbage ***\n";
-        QueueElement * temp = new(QueueElement);
-        QueueElement garbage = *temp;     // "Garbage" value
-        delete temp;
-        return garbage;
+char Queue::dequeue() {
+    if (front == nullptr) {
+        cout<< "Queue is empty";
     }
+    char data = front->ch;
+    BSTNode* temp = front;
+    front = front->right;
+    if (front == nullptr) {
+        rear = nullptr;
+    }
+    delete temp;
+    return data;
 }
 
-//--- Definition of back()
-QueueElement Queue::back() const
-{
-    if (!empty())
-        return (MyBack->data);
-    else
-    {
-        cerr << "*** Queue is empty "
-                " -- returning garbage ***\n";
-        QueueElement * temp = new(QueueElement);
-        QueueElement garbage = *temp;     // "Garbage" value
-        delete temp;
-        return garbage;
-    }
+bool Queue::isEmpty() {
+    return front == nullptr;
 }
 
-
-//--- Definition of dequeue()
-void Queue::dequeue()
-{
-    if (!empty())
-    {
-        Queue::NodePointer ptr = MyFront;
-        MyFront = MyFront->next;
-        delete ptr;
-        if (MyFront == 0)     // queue is now empty
-            MyBack = 0;
+void Queue::display() {
+    BSTNode* curr = front;
+    while (curr != nullptr) {
+        cout << curr->ch << " "<<curr->freq<<endl;
+        curr = curr->right;
     }
-    else
-        cerr << "*** Queue is empty -- can't remove a value ***\n";
+    cout << endl;
+}
+BSTNode* Queue::top() {
+    return front;
 }
