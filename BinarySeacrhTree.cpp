@@ -77,4 +77,22 @@ int BinarySearchTree::Freqof(char ch)
         }
     }
 }
+string BinarySearchTree::codeof(char ch)
+{
+    BSTNode* current = root;
+    BSTNode* parent = nullptr;
 
+    while(current != nullptr) {
+        parent = current;
+
+        if(ch < current->ch) {
+            current = current->left;
+        }
+        else if(ch > current->ch) {
+            current = current->right;
+        }
+        else {
+            return current->code;
+        }
+    }
+}
