@@ -18,6 +18,7 @@ public:
     void insert(char data);
     void inorderTraversal();
     int Freqof(char ch);
+    string codeof(char ch);
 };
 
 
